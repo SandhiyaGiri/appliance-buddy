@@ -4,24 +4,14 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-COPY appliance-buddy/package*.json ./appliance-buddy/
-COPY backend/package*.json ./backend/
-
-# Install dependencies
-RUN npm install
-RUN cd appliance-buddy && npm install
-RUN cd backend && npm install
-
-# Copy source code
+# Copy all source code
 COPY . .
 
-# Build frontend
-RUN cd appliance-buddy && npm run build
+# Install all dependencies
+RUN npm run install:all
 
-# Build backend
-RUN cd backend && npm run build
+# Build the application
+RUN npm run build
 
 # Expose port
 EXPOSE 3001

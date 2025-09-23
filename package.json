@@ -1,0 +1,45 @@
+{
+  "name": "home-appliance-tracker",
+  "version": "1.0.0",
+  "description": "Home Appliance Tracker - Full Stack Application",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "appliance-buddy"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd appliance-buddy && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd appliance-buddy && npm run build",
+    "start": "npm run start:backend",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd appliance-buddy && npm run preview",
+    "install:all": "npm install && cd backend && npm install && cd ../appliance-buddy && npm install",
+    "clean": "rm -rf node_modules backend/node_modules appliance-buddy/node_modules",
+    "railway:deploy": "./deploy-railway.sh"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/homeappliances.git"
+  },
+  "keywords": [
+    "appliance-tracker",
+    "warranty-management",
+    "maintenance-scheduling",
+    "react",
+    "express",
+    "supabase"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

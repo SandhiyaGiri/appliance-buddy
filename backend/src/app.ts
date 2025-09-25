@@ -6,6 +6,9 @@ import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import { errorHandler } from './middleware/errorHandler.js';
 import routes from './routes/index.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const app = express();
 
@@ -61,6 +64,25 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api', routes);
+
+// Static file serving for frontend build (production)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const frontendDistPath = path.resolve(__dirname, '../../appliance-buddy/dist');
+
+if (fs.existsSync(frontendDistPath)) {
+  app.use(express.static(frontendDistPath));
+}
+
+// SPA fallback: serve index.html for non-API routes
+app.get(/^\/(?!api|health).*/, (req, res, next) => {
+  const indexHtmlPath = path.join(frontendDistPath, 'index.html');
+  if (fs.existsSync(indexHtmlPath)) {
+    res.sendFile(indexHtmlPath);
+  } else {
+    next();
+  }
+});
 
 // Error handling middleware
 app.use(errorHandler);

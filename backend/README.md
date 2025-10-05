@@ -1,264 +1,213 @@
-# Home Appliance Tracker - Backend API
+# Appliance Buddy – Backend API
 
-A robust Node.js/Express backend API for managing home appliances, built with TypeScript and Supabase.
+TypeScript Node.js/Express API for managing home appliances, integrated with Supabase for auth and data. Secured with Helmet, CORS, and request rate limiting, and ready for Docker/Railway deployment.
 
-## 🚀 Features
+## Features
 
-- **RESTful API** for appliance management
-- **Supabase Integration** for database operations
-- **TypeScript** for type safety
-- **Express.js** with middleware for security and performance
-- **CORS** configured for frontend communication
-- **Error handling** and validation
-- **Rate limiting** for API protection
+- RESTful appliance management with Supabase storage
+- Supabase Auth: signup/signin, password reset and update
+- TypeScript throughout (ES modules)
+- Security middleware: Helmet, CORS, rate limiting, compression, morgan
+- Centralized error handling and request validation (zod)
+- Serves the built frontend from `appliance-buddy/dist` in production
 
-## 📋 Prerequisites
+## Tech Stack
 
-- Node.js (v18 or higher)
-- npm or yarn
-- Supabase account and project
-- Git
+- Node.js 18, Express 4
+- TypeScript 5, tsx, nodemon
+- Supabase JS v2
+- Helmet, CORS, express-rate-limit, compression, morgan, zod
 
-## 🛠️ Installation
+## Prerequisites
 
-1. **Clone the repository**
+- Node.js 18+
+- npm 9+
+- Supabase project with tables: `users`, `appliances`, `support_contacts`, `maintenance_tasks`, `linked_documents`
 
-   ```bash
-   git clone <your-repo-url>
-   cd homeappliances/backend
-   ```
-2. **Install dependencies**
+## Getting Started
 
-   ```bash
-   npm install
-   ```
-3. **Environment Setup**
+1) Install dependencies
 
-   ```bash
-   cp .env.example .env
-   ```
+```bash
+cd backend
+npm install
+```
 
-   Update the `.env` file with your Supabase credentials:
+2) Configure environment
 
-   ```env
-   # Database
-   DATABASE_URL=postgresql://postgres:password@db.your-project.supabase.co:5432/postgres
+Create `.env` in `backend/` with at least:
 
-   # Server
-   PORT=3001
-   NODE_ENV=development
+```env
+# Server
+PORT=3001
+NODE_ENV=development
 
-   # CORS
-   FRONTEND_URL=http://localhost:8080
+# CORS / Frontend origin
+FRONTEND_URL=http://localhost:8080
 
-   # Supabase
-   SUPABASE_URL=https://your-project.supabase.co
-   SUPABASE_ANON_KEY=your-anon-key
-   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+# Supabase (one of these must be set)
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+# or
+SUPABASE_ANON_KEY=your-anon-key
+```
 
-   # JWT (for future authentication)
-   JWT_SECRET=your-jwt-secret
-   JWT_EXPIRES_IN=3600
-   ```
+Notes:
+- The Supabase URL is currently defined in `src/config/database.ts`. Change it there if you use a different project.
+- In development, CORS is permissive. In production, set `FRONTEND_URL` to your deployed frontend.
 
-## 🗄️ Database Setup
-
-### Supabase Configuration
-
-1. **Create a new Supabase project** at [supabase.com](https://supabase.com)
-2. **Run the SQL scripts** in your Supabase SQL Editor:
-
-   For development (permissive policies):
-
-   ```sql
-   -- Enable RLS on all tables
-   ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
-   ALTER TABLE public.appliances ENABLE ROW LEVEL SECURITY;
-   ALTER TABLE public.support_contacts ENABLE ROW LEVEL SECURITY;
-   ALTER TABLE public.maintenance_tasks ENABLE ROW LEVEL SECURITY;
-   ALTER TABLE public.linked_documents ENABLE ROW LEVEL SECURITY;
-
-   -- Create permissive policies for development
-   CREATE POLICY "Allow all operations on users" ON public.users FOR ALL USING (true) WITH CHECK (true);
-   CREATE POLICY "Allow all operations on appliances" ON public.appliances FOR ALL USING (true) WITH CHECK (true);
-   CREATE POLICY "Allow all operations on support_contacts" ON public.support_contacts FOR ALL USING (true) WITH CHECK (true);
-   CREATE POLICY "Allow all operations on maintenance_tasks" ON public.maintenance_tasks FOR ALL USING (true) WITH CHECK (true);
-   CREATE POLICY "Allow all operations on linked_documents" ON public.linked_documents FOR ALL USING (true) WITH CHECK (true);
-   ```
-3. **Seed the database** (optional):
-
-   ```bash
-   npm run seed
-   ```
-
-## 🚀 Running the Application
-
-### Development Mode
+3) Run in development
 
 ```bash
 npm run dev
+# http://localhost:${PORT:-3001}
 ```
 
-The server will start on `http://localhost:3001`
-
-### Production Mode
+4) Build and start in production
 
 ```bash
 npm run build
 npm start
 ```
 
-## 📚 API Endpoints
-
-### Appliances
-
-- `GET /api/appliances` - Get all appliances
-- `GET /api/appliances/:id` - Get appliance by ID
-- `POST /api/appliances` - Create new appliance
-- `PUT /api/appliances/:id` - Update appliance
-- `DELETE /api/appliances/:id` - Delete appliance
-
-### Health Check
-
-- `GET /health` - Server health status
-
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 backend/
-├── src/
-│   ├── config/
-│   │   └── database.ts          # Supabase configuration
-│   ├── controllers/
-│   │   └── ApplianceController.ts # API route handlers
-│   ├── middleware/
-│   │   ├── errorHandler.ts      # Global error handling
-│   │   └── validation.ts        # Request validation
-│   ├── models/
-│   │   └── schema.ts            # Database schema definitions
-│   ├── routes/
-│   │   ├── appliances.ts        # Appliance routes
-│   │   └── index.ts             # Route aggregation
-│   ├── services/
-│   │   └── ApplianceService.ts  # Business logic
-│   ├── types/
-│   │   └── appliance.ts         # TypeScript type definitions
-│   ├── data/
-│   │   └── mockAppliances.ts    # Sample data
-│   ├── app.ts                   # Express app configuration
-│   └── server.ts                # Server startup
-├── scripts/
-│   ├── migrate.ts               # Database migrations
-│   ├── seed.ts                  # Database seeding
-│   ├── enable-rls-simple.sql    # RLS setup for development
-│   └── fix-supabase-rls.sql     # Comprehensive RLS setup
-├── package.json
-├── tsconfig.json
-├── nodemon.json
-└── README.md
+├─ src/
+│  ├─ app.ts                 # Express app setup, security, CORS, static serving
+│  ├─ server.ts              # Bootstraps server and connection test
+│  ├─ config/
+│  │  └─ database.ts         # Supabase client (URL + key from env)
+│  ├─ routes/
+│  │  ├─ index.ts            # Route aggregation (/api)
+│  │  ├─ appliances.ts       # CRUD + stats (protected)
+│  │  └─ auth.ts             # Auth/signup/signin/password flows
+│  ├─ controllers/
+│  │  └─ ApplianceController.ts
+│  ├─ services/
+│  │  └─ ApplianceService.ts # Business logic + transformations
+│  ├─ middleware/
+│  │  ├─ auth.ts             # Bearer token validation via Supabase
+│  │  ├─ errorHandler.ts     # Centralized error responses
+│  │  └─ validation.ts       # zod-powered request validation
+│  ├─ data/
+│  │  └─ mockAppliances.ts   # Sample data for seeding
+│  └─ types/
+│     └─ appliance.ts        # Shared types
+├─ scripts/
+│  └─ seed.ts                # Seed helper (uses mock data)
+├─ Dockerfile
+├─ nodemon.json
+├─ package.json
+└─ tsconfig.json
 ```
 
-## 🛡️ Security Features
+## Environment Variables
 
-- **CORS** configured for specific origins
-- **Helmet** for security headers
-- **Rate limiting** to prevent abuse
-- **Input validation** and sanitization
-- **Error handling** without sensitive data exposure
+| Name                         | Required | Default      | Description |
+|------------------------------|----------|--------------|-------------|
+| `PORT`                       | No       | 3001         | Server port |
+| `NODE_ENV`                   | No       | development  | Node environment |
+| `FRONTEND_URL`               | No       | —            | Allowed origin in prod CORS and auth redirects |
+| `SUPABASE_SERVICE_ROLE_KEY`  | Yes/No   | —            | Prefer this for server-side; else set `SUPABASE_ANON_KEY` |
+| `SUPABASE_ANON_KEY`          | Yes/No   | —            | Used if service role not set |
 
-## 🧪 Testing
+Supabase URL is currently hardcoded in `src/config/database.ts`. Update it to your project URL when needed.
+
+## Running with Docker
+
+Build and run:
 
 ```bash
-# Run tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
+docker build -t appliance-backend .
+docker run --rm -p 3001:3001 \
+  -e NODE_ENV=production \
+  -e PORT=3001 \
+  -e FRONTEND_URL=http://localhost:8080 \
+  -e SUPABASE_SERVICE_ROLE_KEY=your-service-role-key \
+  appliance-backend
 ```
 
-## 📝 Code Quality
+The image exposes port 3001 and includes a `/health` Docker healthcheck.
+
+## API Overview
+
+Base URL: `/api`
+
+### Health
+
+- `GET /health` → `{ status: 'OK', timestamp }`
+
+### Auth
+
+- `POST /api/auth/signup` — body: `{ email, password, name? }`
+- `POST /api/auth/signin` — body: `{ email, password }` → returns `{ user, session }`
+- `POST /api/auth/signout` — requires `Authorization: Bearer <token>`
+- `GET  /api/auth/me` — requires Bearer token, returns current user
+- `POST /api/auth/refresh` — body: `{ refresh_token }` → returns `{ session }`
+- `POST /api/auth/reset-password` — body: `{ email }` (sends reset email)
+- `POST /api/auth/update-password` — Bearer token, body: `{ newPassword }`
+- `POST /api/auth/verify-reset-token` — body: `{ access_token, refresh_token? }`
+- `POST /api/auth/update-password-with-token` — body: `{ newPassword, access_token, refresh_token? }`
+- `GET  /api/auth/recovery-callback` — backend bridge that redirects to frontend with tokens
+
+Auth uses Supabase JWT in the `Authorization: Bearer <access_token>` header. Protected routes will return 401/403 if the token is missing/invalid.
+
+### Appliances (protected)
+
+- `GET    /api/appliances` — query: `search?`, `filter?` (`all` | `Active` | `Expiring Soon` | `Expired`)
+- `GET    /api/appliances/:id`
+- `POST   /api/appliances` — body validated via zod
+- `PUT    /api/appliances/:id`
+- `DELETE /api/appliances/:id`
+- `GET    /api/appliances/stats/overview` — aggregate counts by warranty status
+
+All appliance routes require a valid Bearer token. Data is scoped by `user_id` when available.
+
+## CORS, Security, and Limits
+
+- Helmet enabled with relaxed CSP/COEP for frontend compatibility.
+- CORS: permissive in development; in production only `FRONTEND_URL` is allowed.
+- Rate limiting: `/api/*` limited to 100 requests per 15 minutes per IP.
+- Compression enabled; morgan logging only in development.
+
+## Serving the Frontend (production)
+
+If `appliance-buddy/dist` exists at the repo root, the backend will:
+- Serve static assets from that folder
+- Respond with `index.html` for non-`/api` and non-`/health` routes (SPA fallback)
+
+## Seeding Data
+
+Use the included seed helper (ensure your Supabase tables exist):
 
 ```bash
-# Lint code
-npm run lint
-
-# Fix linting issues
-npm run lint:fix
+npx tsx scripts/seed.ts
 ```
 
-## 🔧 Available Scripts
+This creates a test user and inserts mock appliances, support contacts, maintenance tasks, and linked documents.
 
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build TypeScript to JavaScript
-- `npm start` - Start production server
-- `npm run seed` - Seed database with sample data
-- `npm test` - Run test suite
-- `npm run lint` - Check code quality
-- `npm run lint:fix` - Fix code quality issues
+## Error Handling
 
-## 🌐 Environment Variables
+Errors are returned as JSON: `{ error: string }`. Unknown routes return 404 `{ error: 'Route not found' }`.
 
-| Variable                      | Description               | Required                  |
-| ----------------------------- | ------------------------- | ------------------------- |
-| `PORT`                      | Server port               | No (default: 3001)        |
-| `NODE_ENV`                  | Environment mode          | No (default: development) |
-| `SUPABASE_URL`              | Supabase project URL      | Yes                       |
-| `SUPABASE_ANON_KEY`         | Supabase anonymous key    | Yes                       |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key | Yes                       |
-| `FRONTEND_URL`              | Frontend URL for CORS     | No                        |
-| `JWT_SECRET`                | JWT signing secret        | No (for future auth)      |
+## Available npm Scripts
 
-## 🐛 Troubleshooting
+- `dev` — run with nodemon + tsx
+- `build` — compile TypeScript to `dist/`
+- `start` — start from `dist/`
+- `lint`, `lint:fix` — ESLint checks and fixes
 
-### Common Issues
+## Troubleshooting
 
-1. **Database Connection Failed**
+- 401/403 on protected routes: ensure `Authorization: Bearer <access_token>` from Supabase is present and valid
+- CORS errors: set `FRONTEND_URL` and verify `NODE_ENV=production` on server only when deployed
+- Supabase connection: verify the key is set and update the URL in `src/config/database.ts`
 
-   - Check your Supabase URL and keys
-   - Ensure RLS policies are set up correctly
-   - Verify network connectivity
-2. **CORS Errors**
+## License
 
-   - Update `FRONTEND_URL` in `.env`
-   - Check CORS configuration in `app.ts`
-3. **TypeScript Errors**
-
-   - Run `npm run build` to check for type errors
-   - Ensure all dependencies are installed
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-If you encounter any issues or have questions:
-
-1. Check the [troubleshooting section](#-troubleshooting)
-2. Review the [API documentation](#-api-endpoints)
-3. Open an issue on GitHub
-4. Contact the development team
-
-## 🔮 Future Enhancements
-
-- [ ] User authentication and authorization
-- [ ] File upload for appliance images
-- [ ] Email notifications for maintenance reminders
-- [ ] API rate limiting per user
-- [ ] Database query optimization
-- [ ] Comprehensive test coverage
-- [ ] API documentation with Swagger
-- [ ] Docker containerization
-- [ ] CI/CD pipeline setup
+MIT — see `LICENSE`.
 
 ---
 
-**Happy Coding! 🚀**
+Happy building! 🚀

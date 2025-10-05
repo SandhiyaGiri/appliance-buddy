@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { LoginForm } from './LoginForm';
 import { SignupForm } from './SignupForm';
 
-export const AuthPage: React.FC = () => {
+const AuthPageComponent: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
 
   return (
@@ -24,3 +24,6 @@ export const AuthPage: React.FC = () => {
     </div>
   );
 };
+
+export const AuthPage = AuthPageComponent;
+export default AuthPageComponent;

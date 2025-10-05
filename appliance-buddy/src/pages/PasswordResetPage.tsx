@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Loader2 } from 'lucide-react';
 
-export const PasswordResetPage: React.FC = () => {
+const PasswordResetPageComponent: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { verifyResetToken } = useAuth();
@@ -161,3 +161,6 @@ export const PasswordResetPage: React.FC = () => {
     </div>
   );
 };
+
+export const PasswordResetPage = PasswordResetPageComponent;
+export default PasswordResetPageComponent;

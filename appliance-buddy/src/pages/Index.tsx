@@ -1,12 +1,10 @@
-import { useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { useAppliances } from '@/hooks/useAppliances';
 import { useAuth } from '@/contexts/AuthContext';
 import { ApplianceCard } from '@/components/ApplianceCard';
-import { ApplianceForm } from '@/components/ApplianceForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { 
   Plus, 
   Search, 
@@ -20,7 +18,9 @@ import {
 } from 'lucide-react';
 import { Appliance } from '@/types/appliance';
 import { getWarrantyStatus } from '@/utils/dateUtils';
-import { PasswordChangeDialog } from '@/components/auth/PasswordChangeDialog';
+
+const ApplianceForm = lazy(() => import('@/components/ApplianceForm'));
+const PasswordChangeDialog = lazy(() => import('@/components/auth/PasswordChangeDialog'));
 
 const Index = () => {
   const { appliances, loading, addAppliance, updateAppliance, resetToSampleData } = useAppliances();
@@ -102,16 +102,30 @@ const Index = () => {
               <User className="h-4 w-4" />
               <span>Welcome, {user?.name || user?.email}</span>
             </div>
-            <PasswordChangeDialog>
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center space-x-1"
-              >
-                <Settings className="h-4 w-4" />
-                <span>Settings</span>
-              </Button>
-            </PasswordChangeDialog>
+            <Suspense
+              fallback={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center space-x-1"
+                  disabled
+                >
+                  <Settings className="h-4 w-4" />
+                  <span>Settings</span>
+                </Button>
+              }
+            >
+              <PasswordChangeDialog>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center space-x-1"
+                >
+                  <Settings className="h-4 w-4" />
+                  <span>Settings</span>
+                </Button>
+              </PasswordChangeDialog>
+            </Suspense>
             <Button
               variant="outline"
               size="sm"
@@ -291,14 +305,25 @@ const Index = () => {
 
       {/* Form Modal */}
       {showForm && (
-        <ApplianceForm
-          appliance={editingAppliance}
-          onSave={handleSave}
-          onCancel={() => {
-            setShowForm(false);
-            setEditingAppliance(undefined);
-          }}
-        />
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+              <div className="bg-white rounded-md p-6 shadow-lg text-center space-y-3">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                <p className="text-sm text-muted-foreground">Loading form...</p>
+              </div>
+            </div>
+          }
+        >
+          <ApplianceForm
+            appliance={editingAppliance}
+            onSave={handleSave}
+            onCancel={() => {
+              setShowForm(false);
+              setEditingAppliance(undefined);
+            }}
+          />
+        </Suspense>
       )}
     </div>
   );

@@ -3,27 +3,29 @@
   "version": "1.0.0",
   "description": "Home Appliance Tracker - Full Stack Application",
   "private": true,
+  "packageManager": "npm@10.9.0",
   "workspaces": [
     "backend",
     "appliance-buddy"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:backend": "cd backend && npm run dev",
-    "dev:frontend": "cd appliance-buddy && npm run dev",
-    "build": "npm run build:frontend && npm run build:backend",
-    "build:backend": "cd backend && npm install --no-audit --no-fund && npm run build",
-    "build:frontend": "cd appliance-buddy && npm install --no-audit --no-fund && npm run build",
+    "dev": "turbo run dev --parallel",
+    "dev:backend": "turbo run dev --filter=appliance-tracker-backend",
+    "dev:frontend": "turbo run dev --filter=vite_react_shadcn_ts",
+    "build": "turbo run build",
+    "build:backend": "turbo run build --filter=appliance-tracker-backend",
+    "build:frontend": "turbo run build --filter=vite_react_shadcn_ts",
     "build:full": "npm run build",
-    "start": "npm run start:backend",
-    "start:backend": "cd backend && npm start",
-    "start:frontend": "cd appliance-buddy && npm run preview",
-    "install:all": "npm install && cd backend && npm install && cd ../appliance-buddy && npm install",
+    "start": "turbo run start --parallel",
+    "start:backend": "turbo run start --filter=appliance-tracker-backend",
+    "start:frontend": "turbo run start --filter=vite_react_shadcn_ts",
+    "lint": "turbo run lint --parallel",
+    "install:all": "npm install",
     "clean": "rm -rf node_modules backend/node_modules appliance-buddy/node_modules",
     "railway:deploy": "./deploy-railway.sh"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "turbo": "^2.2.4"
   },
   "engines": {
     "node": ">=18.0.0",

@@ -13,7 +13,7 @@ interface ApplianceFormProps {
   onCancel: () => void;
 }
 
-export const ApplianceForm = ({ appliance, onSave, onCancel }: ApplianceFormProps) => {
+const ApplianceFormComponent = ({ appliance, onSave, onCancel }: ApplianceFormProps) => {
   const [formData, setFormData] = useState({
     name: appliance?.name || '',
     brand: appliance?.brand || '',
@@ -221,3 +221,6 @@ export const ApplianceForm = ({ appliance, onSave, onCancel }: ApplianceFormProp
     </div>
   );
 };
+
+export const ApplianceForm = ApplianceFormComponent;
+export default ApplianceFormComponent;

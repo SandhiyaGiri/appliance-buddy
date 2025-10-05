@@ -11,7 +11,7 @@ interface PasswordChangeDialogProps {
   children: React.ReactNode;
 }
 
-export const PasswordChangeDialog: React.FC<PasswordChangeDialogProps> = ({ children }) => {
+const PasswordChangeDialogComponent: React.FC<PasswordChangeDialogProps> = ({ children }) => {
   const [open, setOpen] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -177,3 +177,6 @@ export const PasswordChangeDialog: React.FC<PasswordChangeDialogProps> = ({ chil
     </Dialog>
   );
 };
+
+export const PasswordChangeDialog = PasswordChangeDialogComponent;
+export default PasswordChangeDialogComponent;

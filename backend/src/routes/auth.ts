@@ -216,7 +216,7 @@ router.post('/update-password', authenticateToken, async (req: AuthenticatedRequ
 // Verify password reset token endpoint
 router.post('/verify-reset-token', async (req: Request, res: Response) => {
   try {
-    const { access_token, refresh_token } = req.body;
+    const { access_token } = req.body;
 
     if (!access_token) {
       return res.status(400).json({ error: 'Access token is required' });
@@ -260,7 +260,7 @@ router.post('/update-password-with-token', async (req: Request, res: Response) =
     }
 
     // Set the session with the reset tokens
-    const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+    const { error: sessionError } = await supabase.auth.setSession({
       access_token,
       refresh_token: refresh_token || ''
     });

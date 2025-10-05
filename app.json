@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "193e0730-6fda-46a0-9738-c17cb7847b8d"
+      }
+    },
+    "android": {
+      "package": "com.sandhiya07.homeappliancetracker"
+    },
+    "ios": {
+      "bundleIdentifier": "com.sandhiya07.homeappliancetracker",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    }
+  }
+}

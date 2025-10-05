@@ -6,7 +6,8 @@
   "packageManager": "npm@10.9.0",
   "workspaces": [
     "backend",
-    "appliance-buddy"
+    "appliance-buddy",
+    "mobile-app"
   ],
   "scripts": {
     "dev": "turbo run dev --parallel",
@@ -26,6 +27,12 @@
   },
   "devDependencies": {
     "turbo": "^2.2.4"
+  },
+  "overrides": {
+    "expo": "54.0.12",
+    "expo-keep-awake@15.0.7": {
+      "react": "19.1.0"
+    }
   },
   "engines": {
     "node": ">=18.0.0",

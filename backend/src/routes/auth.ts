@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import { supabase } from '../config/database.js';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth.js';
 
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://appliance-buddy-production-0f79.up.railway.app';
+
 const router = express.Router();
 
 // Sign up endpoint
@@ -21,7 +23,7 @@ router.post('/signup', async (req: Request, res: Response) => {
         data: {
           name: name || email.split('@')[0]
         },
-        emailRedirectTo: process.env.FRONTEND_URL || 'http://localhost:3000'
+        emailRedirectTo: FRONTEND_URL
       }
     });
 
@@ -166,7 +168,7 @@ router.post('/reset-password', async (req: Request, res: Response) => {
 
     // Send password reset email via Supabase Auth -> redirect to frontend reset page
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.FRONTEND_URL || 'http://localhost:8080'}/reset-password`
+      redirectTo: `${FRONTEND_URL}/reset-password`
     });
 
     if (error) {
@@ -290,7 +292,7 @@ router.post('/update-password-with-token', async (req: Request, res: Response) =
 // Backend callback to translate Supabase recovery hash into query params and redirect to frontend
 router.get('/recovery-callback', async (req: Request, res: Response) => {
   try {
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:8080';
+    const frontendUrl = FRONTEND_URL;
 
     // Supabase sends tokens as hash in the URL. Here we reconstruct based on the referer if present
     // or simply redirect the client to the frontend reset page where client JS can handle hash.
@@ -310,7 +312,7 @@ router.get('/recovery-callback', async (req: Request, res: Response) => {
     return res.redirect(302, `${frontendUrl}/reset-password`);
   } catch (error) {
     console.error('Recovery callback error:', error);
-    return res.redirect(302, (process.env.FRONTEND_URL || 'http://localhost:8080') + '/reset-password');
+    return res.redirect(302, `${FRONTEND_URL}/reset-password`);
   }
 });
 

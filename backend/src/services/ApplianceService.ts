@@ -214,12 +214,24 @@ export class ApplianceService {
 
   async updateAppliance(id: string, data: UpdateApplianceData, userId?: string): Promise<Appliance | null> {
     try {
+      const updates: Record<string, unknown> = {};
+
+      if (data.name !== undefined) updates.name = data.name;
+      if (data.brand !== undefined) updates.brand = data.brand;
+      if (data.model !== undefined) updates.model = data.model;
+      if (data.purchaseDate !== undefined) updates.purchase_date = data.purchaseDate;
+      if (data.warrantyDurationMonths !== undefined) {
+        updates.warranty_duration_months = data.warrantyDurationMonths;
+      }
+      if (data.serialNumber !== undefined) updates.serial_number = data.serialNumber ?? null;
+      if (data.purchaseLocation !== undefined) updates.purchase_location = data.purchaseLocation ?? null;
+      if (data.notes !== undefined) updates.notes = data.notes ?? null;
+
+      updates.updated_at = new Date().toISOString();
+
       let query = supabase
         .from('appliances')
-        .update({
-          ...data,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updates)
         .eq('id', id);
 
       // Filter by user ID if provided

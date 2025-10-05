@@ -13,6 +13,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     resizeMode: 'contain',
     backgroundColor: '#ffffff'
   },
+  platforms: ['ios', 'android'],
   assetBundlePatterns: ['**/*'],
   ios: {
     supportsTablet: true,
@@ -30,10 +31,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   runtimeVersion: {
     policy: 'appVersion'
-  },
-  web: {
-    bundler: 'metro',
-    favicon: './assets/favicon.png'
   },
   plugins: ['expo-font', 'expo-secure-store'],
   extra: {

@@ -3,6 +3,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = 'https://vejihuzhsoixppcyghdw.supabase.co';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+export const isSupabaseConfigured = Boolean(supabaseKey);
 const createSupabaseClient = (): SupabaseClient => {
   if (!supabaseKey) {
     console.warn('⚠️  Missing Supabase key. Set SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY. Booting without DB.');

@@ -1,18 +1,26 @@
 import 'dotenv/config';
 import app from './app.js';
-import { supabase } from './config/database.js';
+import { supabase, isSupabaseConfigured } from './config/database.js';
 
 const PORT = process.env.PORT || 3001;
 
 const startServer = async () => {
   try {
-    // Test database connection
-    const { data, error } = await supabase.from('appliances').select('count').limit(1);
-    if (error) {
-      console.log('⚠️  Database connection test failed, but continuing...');
-      console.log('Error:', error.message);
+    if (isSupabaseConfigured) {
+      try {
+        const { data, error } = await supabase.from('appliances').select('count').limit(1);
+        if (error) {
+          console.log('⚠️  Database connection test failed, but continuing...');
+          console.log('Error:', error.message);
+        } else if (data) {
+          console.log('✅ Database connected successfully');
+        }
+      } catch (error) {
+        console.log('⚠️  Database connection test failed, but continuing...');
+        console.log('Error:', error instanceof Error ? error.message : error);
+      }
     } else {
-      console.log('✅ Database connected successfully');
+      console.warn('⚠️  Supabase credentials not configured. Skipping database connection test.');
     }
 
     app.listen(PORT, () => {

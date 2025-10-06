@@ -3,15 +3,43 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = 'https://vejihuzhsoixppcyghdw.supabase.co';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
+let supabase;
 if (!supabaseKey) {
-  throw new Error('Missing Supabase key. Please set SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY in your .env file');
+  console.warn('⚠️  Missing Supabase key. Set SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY. Booting without DB.');
+  // Create a dummy client that throws on use to avoid crashes at import time
+  supabase = {
+    auth: {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      async getUser(_token?: string) { throw new Error('Supabase not configured'); },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      async signUp(_args: unknown) { throw new Error('Supabase not configured'); },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      async signInWithPassword(_args: unknown) { throw new Error('Supabase not configured'); },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      async signOut() { throw new Error('Supabase not configured'); },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      async refreshSession(_args: unknown) { throw new Error('Supabase not configured'); },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      async updateUser(_args: unknown) { throw new Error('Supabase not configured'); },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      async resetPasswordForEmail(_email: string, _opts?: unknown) { throw new Error('Supabase not configured'); },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      async setSession(_args: unknown) { throw new Error('Supabase not configured'); }
+    },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    from(_table: string) { throw new Error('Supabase not configured'); },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    rpc(_fn: string, _args?: unknown) { throw new Error('Supabase not configured'); }
+  } as unknown as ReturnType<typeof createClient>;
+} else {
+  console.log('🔗 Connecting to Supabase...');
+  supabase = createClient(supabaseUrl, supabaseKey);
+  console.log('✅ Connected to Supabase');
 }
 
-console.log('🔗 Connecting to Supabase...');
-export const supabase = createClient(supabaseUrl, supabaseKey);
-console.log('✅ Connected to Supabase');
-
 // Create a simple database interface that works with Supabase
+export const supabaseClient = supabase;
+
 export const db = {
   // For testing database connection
   execute: async (query: any) => {

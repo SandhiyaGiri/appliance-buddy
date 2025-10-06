@@ -18,7 +18,7 @@
     "build:backend": "turbo run build --filter=appliance-tracker-backend",
     "build:frontend": "turbo run build --filter=vite_react_shadcn_ts",
     "build:full": "turbo run build --filter=!mobile-app",
-    "start": "turbo run start --parallel",
+    "start": "turbo run start --filter=appliance-tracker-backend",
     "start:backend": "turbo run start --filter=appliance-tracker-backend",
     "start:frontend": "turbo run start --filter=vite_react_shadcn_ts",
     "lint": "turbo run lint --parallel",
